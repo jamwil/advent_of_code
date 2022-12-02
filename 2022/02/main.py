@@ -1,8 +1,12 @@
 """Day 2 of Advent of Code 2022."""
+from enum import Enum
+from pathlib import Path
 
 
 class Rock:
     """Rock tool."""
+
+    tool_score = 1
 
     @staticmethod
     def beats():
@@ -12,6 +16,8 @@ class Rock:
 class Paper:
     """Paper tool."""
 
+    tool_score = 2
+
     @staticmethod
     def beats():
         return Rock
@@ -20,9 +26,19 @@ class Paper:
 class Scissors:
     """Scissors tool."""
 
+    tool_score = 3
+
     @staticmethod
     def beats():
         return Paper
+
+
+class Outcomes(Enum):
+    """Outcome of a round."""
+
+    won = 6
+    draw = 3
+    lost = 0
 
 
 CODES = {
@@ -35,49 +51,31 @@ CODES = {
 }
 
 NEEDED_OUTCOMES = {
-    "X": "lost",
-    "Y": "draw",
-    "Z": "won",
-}
-
-TOOL_SCORING = {
-    Rock: 1,
-    Paper: 2,
-    Scissors: 3,
-}
-
-OUTCOME_SCORING = {
-    "lost": 0,
-    "draw": 3,
-    "won": 6,
+    "X": Outcomes.lost,
+    "Y": Outcomes.draw,
+    "Z": Outcomes.won,
 }
 
 
-def calculate_score_1(strategy_guide: str) -> int:
+def calculate_score_1(strategy_guide):
     """Play a game of Rock, Paper, Scissors where column B is the player choice."""
     total_score = 0
     for line in strategy_guide.splitlines():
         opponent_choice, player_choice = (CODES.get(x) for x in line.split())
 
-        # Get the outcome of the round.
         if player_choice.beats() == opponent_choice:
-            outcome = "won"
+            outcome = Outcomes.won
         elif player_choice == opponent_choice:
-            outcome = "draw"
+            outcome = Outcomes.draw
         else:
-            outcome = "lost"
-        outcome_score = OUTCOME_SCORING.get(outcome)
+            outcome = Outcomes.lost
 
-        # Get the tool score.
-        tool_score = TOOL_SCORING.get(player_choice)
-
-        # Add the scores together.
-        total_score += outcome_score + tool_score
+        total_score += outcome.value + player_choice.tool_score
 
     return total_score
 
 
-def calculate_score_2(strategy_guide: str) -> int:
+def calculate_score_2(strategy_guide):
     """Play a game of Rock, Paper, Scissors where column B is the needed outcome."""
     total_score = 0
     for line in strategy_guide.splitlines():
@@ -85,28 +83,21 @@ def calculate_score_2(strategy_guide: str) -> int:
         opponent_choice = CODES.get(opponent_choice)
         needed_outcome = NEEDED_OUTCOMES.get(needed_outcome)
 
-        # Get the outcome of the round.
-        outcome_score = OUTCOME_SCORING.get(needed_outcome)
-
-        # Determine which tool to play
-        if needed_outcome == "lost":
+        if needed_outcome == Outcomes.lost:
             player_choice = opponent_choice.beats()
-        elif needed_outcome == "draw":
+        elif needed_outcome == Outcomes.draw:
             player_choice = opponent_choice
         else:
             player_choice = opponent_choice.beats().beats()
 
-        # Get the tool score.
-        tool_score = TOOL_SCORING.get(player_choice)
-
-        # Add the scores together.
-        total_score += outcome_score + tool_score
+        total_score += needed_outcome.value + player_choice.tool_score
 
     return total_score
 
 
 if __name__ == "__main__":
-    with open("input.txt", "r", encoding="utf-8") as file:
+    input_data = Path(__file__).parent.resolve() / "input.txt"
+    with open(input_data, "r", encoding="utf-8") as file:
         data = file.read()
     print("Part 1:", calculate_score_1(data))
     print("Part 2:", calculate_score_2(data))
