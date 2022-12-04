@@ -1,5 +1,5 @@
 """Unit tests for Advent of Code 2022 Day 3."""
-from main import sum_item_priority, _create_item_priority_map
+from main import sum_item_priority, sum_item_group_priority, _create_item_priority_map
 
 
 CONTENTS = """
@@ -19,6 +19,11 @@ def test_create_item_priority_map():
     assert mapping["L"] == 38
 
 
-def test_main():
+def test_sum_item_priority():
     """Test that the main function returns the correct value."""
     assert sum_item_priority(CONTENTS) == 157
+
+
+def test_sum_item_group_priority():
+    """Test that the main function returns the correct value."""
+    assert sum_item_group_priority(CONTENTS) == 70
