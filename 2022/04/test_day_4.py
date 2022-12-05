@@ -1,5 +1,5 @@
 """Unit tests for Advent of Code Day 4."""
-from day_4 import count_subsets
+from day_4 import count_subsets, count_intersects
 
 ASSIGNMENTS = """
 2-4,6-8
@@ -11,6 +11,11 @@ ASSIGNMENTS = """
 """.strip()
 
 
-def test_overlapping_assignment_pairs():
+def test_count_subsets():
     """Test that overlapping assignment pairs are found."""
     assert count_subsets(ASSIGNMENTS) == 2
+
+
+def test_count_intersects():
+    """Test that overlapping assignment pairs are found."""
+    assert count_intersects(ASSIGNMENTS) == 4
