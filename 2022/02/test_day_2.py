@@ -1,5 +1,5 @@
 """Test Day 2 of Advent of Code."""
-from main import calculate_score_1, calculate_score_2
+from day_2 import calculate_score_1, calculate_score_2
 
 STRATEGY_GUIDE = """
 A Y

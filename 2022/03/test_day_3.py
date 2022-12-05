@@ -1,5 +1,5 @@
 """Unit tests for Advent of Code 2022 Day 3."""
-from main import sum_item_priority, sum_item_group_priority, _create_item_priority_map
+from day_3 import sum_item_priority, sum_item_group_priority, _create_item_priority_map
 
 
 CONTENTS = """
