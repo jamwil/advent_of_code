@@ -1,5 +1,5 @@
 """Unit tests for Day 7."""
-from day_7 import build_file_system, get_directories
+from day_7 import build_file_system, get_directories, space_picker
 
 COMMANDS = """
 $ cd /
@@ -34,8 +34,14 @@ def test_build_file_system():
     assert root.size == 48381165
 
 
-def test_get_directories():
+def test_get_directories_under_100k():
     """Test the max-size directory filter."""
     root = build_file_system(COMMANDS)
-    assert set(x.name for x in get_directories(root)) == set(("a", "e"))
-    assert sum(x.size for x in get_directories(root)) == 95437
+    assert set(x.name for x in get_directories(root, 100000)) == set(("a", "e"))
+    assert sum(x.size for x in get_directories(root, 100000)) == 95437
+
+
+def test_space_picker():
+    """Test the space picker."""
+    root = build_file_system(COMMANDS)
+    assert space_picker(root) == 24933642

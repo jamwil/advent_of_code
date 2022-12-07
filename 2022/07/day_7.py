@@ -62,17 +62,32 @@ def build_file_system(commands: str) -> Directory:
     return cwd
 
 
-def get_directories(file_system: Directory) -> List[Directory | File]:
+def get_directories(
+    file_system: Directory, threshold: Optional[int] = None
+) -> List[Directory | File]:
     """Walk a file system and return all directories that meet the threshold."""
     dirs = []
+    if file_system.name == "/" and (not threshold or file_system.size <= threshold):
+        dirs.append(file_system)
     if not hasattr(file_system, "children"):
         return dirs
     for child in file_system.children.values():
         if isinstance(child, Directory):
-            if child.size < 100000:
+            if not threshold or child.size <= threshold:
                 dirs.append(child)
-            dirs.extend(get_directories(child))
+            dirs.extend(get_directories(child, threshold))
     return dirs
+
+
+def space_picker(file_system: Directory):
+    """Find the smallest directory that exceeds the shortfall."""
+    unused_space = 70000000 - file_system.size
+    needed_space = 30000000
+    shortfall = needed_space - unused_space
+    directories = sorted(get_directories(file_system), key=lambda x: x.size)
+    for directory in directories:
+        if directory.size >= shortfall:
+            return directory.size
 
 
 if __name__ == "__main__":
@@ -80,5 +95,8 @@ if __name__ == "__main__":
     with open(file_input, "r", encoding="utf-8") as file:
         terminal_session = file.read().strip()
     root = build_file_system(terminal_session)
-    valid_directories = get_directories(root)
-    print(f"Total size of valid directories: {sum(x.size for x in valid_directories)}")
+    directories_under_100k = get_directories(root, 100000)
+    print(
+        f"Total size of valid directories: {sum(x.size for x in directories_under_100k)}"
+    )
+    print("Size of directory that exceeds the shortfall:", space_picker(root))
